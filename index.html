@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+         <style>
+            .videoContainer {
+                position: relative;
+                width: 200px;
+                height: 150px;
+}
+            .videoContainer video {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+}
+        </style>
+        <script src="https://simplewebrtc.com/latest-v2.js"></script> 
+    </head>
+    <body>
+        <input type="text" id = "room" />
+        <button onclick="selectRoom()" >Call</button>
+
+        <video height="300" id="localVideo"><h4>This is local video</h4></video>
+        <div id="remotesVideos"></div>
+    </body>
+    <script>
+    var room;
+    function selectRoom(){
+        room = document.getElementById('room').value;
+        console.log('This is room '+ room);
+            var webrtc = new SimpleWebRTC({
+  // the id/element dom element that will hold "our" video
+  localVideoEl: 'localVideo',
+  // the id/element dom element that will hold remote videos
+  remoteVideosEl: 'remotesVideos',
+  // immediately ask for camera access
+  autoRequestMedia: true
+});
+// we have to wait until it's ready
+webrtc.on('readyToCall', function () {
+  // you can name it anything
+  console.log('Ready to call');
+  webrtc.joinRoom(room);
+});
+// a peer video has been added
+webrtc.on('videoAdded', function (video, peer) {
+    console.log('video added', peer);
+    webrtc.shareScreen(function(){
+        
+        console.log('screen is sharing');
+    })
+   var remotes = document.getElementById('subscriber');
+            console.log('This is remotes '+ remotes);
+            if (remotes) {
+                var container = document.createElement('div');
+                container.className = 'videoContainer';
+                container.setAttribute('data-user', userType);
+                // $div.attr('data-user', streamUser.userType);
+                container.setAttribute('class', 'col-md-6 each-video'); 
+                container.id = 'container_' + webrtc.getDomId(peer);
+                container.appendChild(video);
+
+                remotes.appendChild(container);
+
+
+            }
+});
+// a peer video was removed
+webrtc.on('videoRemoved', function (video, peer) {
+    console.log('video removed ', peer);
+webrtc.setVolumeForAll(1);
+});
+    }
+    </script>
+</html>
